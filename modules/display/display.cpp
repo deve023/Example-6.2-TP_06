@@ -1,3 +1,21 @@
+/*
+    Este archivo de codigo utiliza una interfaz paralela de 8 bits para comunicarse con la pantalla LCD:
+    3 pines para el control de la señal (rs, rw, e) y 8 pines D0, D1, ..., D7 para comunicar datos.
+    
+    Arbol de funciones:
+    displayInit()
+        |- displayCodeWrite()
+        |      |- displayPinWrite()
+        |      |- displayDataBusWrite()
+
+   displayWriteLine()
+        |- displayCodeWrite()
+        |      |- displayPinWrite()
+        |      |- displayDataBusWrite()
+        
+   Pines de placa NUCLEO asociados a la pantalla LCD: D0-D9    
+*/
+
 //=====[Libraries]=============================================================
 
 #include "mbed.h"
