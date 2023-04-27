@@ -1,6 +1,10 @@
 /*
-    Este archivo de codigo utiliza una interfaz paralela de 8 bits para comunicarse con la pantalla LCD:
-    3 pines para el control de la señal (rs, rw, e) y 8 pines D0, D1, ..., D7 para comunicar datos.
+    Este archivo de codigo utiliza una interfaz paralelo de 4 bits.
+    Se podria utilizar 8 bits, el codigo lo soporta.
+    Simplemente se debe cambiar la linea 134 del archivo user_interface.cpp del modulo
+    user interface. Es dentro de la funcion userInterfaceDisplayInit que se llama a la funcion
+    displayInit y se le indica que se utilizara el modo DISPLAY_CONNECTION_GPIO_4BITS (definido
+    en el enumerativo displayConnection_t de display.h).
     
     Arbol de funciones:
     displayInit()
@@ -16,7 +20,7 @@
         |      |- displayPinWrite()
         |      |- displayDataBusWrite()
         
-   Pines de placa NUCLEO asociados a la pantalla LCD: D0-D9    
+   Pines de placa NUCLEO asociados a la pantalla LCD: ???   
 */
 
 //=====[Libraries]=============================================================
@@ -24,6 +28,7 @@
 #include "mbed.h"
 #include "arm_book_lib.h"
 #include "display.h"
+#include "pc_serial_com.h"
 
 //=====[Declaration of private defines]========================================
 
@@ -223,6 +228,7 @@ void displayCharPositionWrite( uint8_t charPositionX, uint8_t charPositionY )
 void displayStringWrite( const char * str )
 {
     while (*str) {
+        pcSerialComStringWrite(str); // DV - Not working.
         displayCodeWrite(DISPLAY_RS_DATA, *str++);
     }
 }
