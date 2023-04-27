@@ -7,8 +7,11 @@
         |- displayCodeWrite()
         |      |- displayPinWrite()
         |      |- displayDataBusWrite()
-
    displayWriteLine()
+        |- displayCodeWrite()
+        |      |- displayPinWrite()
+        |      |- displayDataBusWrite()
+   displayCharPositionWrite()
         |- displayCodeWrite()
         |      |- displayPinWrite()
         |      |- displayDataBusWrite()
