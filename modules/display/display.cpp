@@ -187,8 +187,9 @@ void displayInit( displayConnection_t connection )
     delay( 1 );  
 }
 
-void displayCharPositionWrite( uint8_t charPositionX, uint8_t charPositionY )
+void displayCharPositionWrite( uint8_t charPositionX, uint8_t charPositionY, char** matrixDisplay, char* matrixDisplayPointer ) // UM - Add matrix and matrix pointer as parameters.
 {    
+    matrixDisplayPointer = &matrixDisplay[charPositionX][charPositionY]; // UM - Pointer placed in matrix given position (x,y).
     switch( charPositionY ) {
         case 0:
             displayCodeWrite( DISPLAY_RS_INSTRUCTION, 
@@ -225,11 +226,12 @@ void displayCharPositionWrite( uint8_t charPositionX, uint8_t charPositionY )
 }
 
 
-void displayStringWrite( const char * str )
+void displayStringWrite( const char * str, char* matrixDisplayPointer ) // UM - Add matrix pointer as parameter.
 {
-    while (*str) {
-        pcSerialComStringWrite(str); // DV - Not working.
+    while (*str && *matrixDisplayPointer) { // UM - Make sure not to write memory positions outside matrixDisplay - CHEQUEAR!!!.
+        // pcSerialComStringWrite(str); // DV - Not working (Should be outside the while).
         displayCodeWrite(DISPLAY_RS_DATA, *str++);
+        *matrixDisplayPointer++ = *str++; // UM - Overwrite display matrix.
     }
 }
 
