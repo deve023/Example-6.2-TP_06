@@ -20,7 +20,8 @@
         |      |- displayPinWrite()
         |      |- displayDataBusWrite()
         
-   Pines de placa NUCLEO asociados a la pantalla LCD: ???   
+   Pines de placa NUCLEO asociados a la pantalla LCD: PF_14(D4), PE_11(D5), PE_9(D6) y PF_13(D7).
+   Si se quiere utilizar interfaz paralelo 8 bits, se utilizarían: PG_9(D0), PG_14(D1), PF_15(D2) y PE_13(D3).
 */
 
 //=====[Libraries]=============================================================
