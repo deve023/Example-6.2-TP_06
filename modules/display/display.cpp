@@ -81,6 +81,9 @@
 #define DISPLAY_PIN_D6 13 
 #define DISPLAY_PIN_D7 14 
 
+#define DISPLAY_ROWS 4 // UM 
+#define DISPLAY_COLS 20 // UM 
+
 //=====[Declaration of private data types]=====================================
 
 //=====[Declaration and initialization of public global objects]===============
@@ -104,6 +107,12 @@ DigitalOut displayEn( D9 );
 
 static display_t display;
 static bool initial8BitCommunicationIsCompleted;
+static char matrixDisplay[DISPLAY_ROWS][DISPLAY_COLS] = {{'A', 'S', 'D', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+                            {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+                            {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+                            {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}}; // UM - Matrix Dispaly delacration and initialization.
+//static char* matrixDisplayPointer = &(matrixDisplay[0][0]); // UM - Matrix display pointer declaration and initialization.
+static int displayCol, displayRow;
 
 //=====[Declarations (prototypes) of private functions]========================
 
@@ -188,9 +197,12 @@ void displayInit( displayConnection_t connection )
     delay( 1 );  
 }
 
-void displayCharPositionWrite( uint8_t charPositionX, uint8_t charPositionY, char** matrixDisplay, char* matrixDisplayPointer ) // UM - Add matrix and matrix pointer as parameters.
-{    
-    matrixDisplayPointer = &matrixDisplay[charPositionX][charPositionY]; // UM - Pointer placed in matrix given position (x,y).
+void displayCharPositionWrite( uint8_t charPositionX, uint8_t charPositionY )
+{
+    //matrixDisplayPointer = &(matrixDisplay[charPositionX][charPositionY]); // UM - Pointer placed in matrix given position (x,y).
+    displayRow = charPositionY;
+    displayCol = charPositionX;
+
     switch( charPositionY ) {
         case 0:
             displayCodeWrite( DISPLAY_RS_INSTRUCTION, 
@@ -227,12 +239,13 @@ void displayCharPositionWrite( uint8_t charPositionX, uint8_t charPositionY, cha
 }
 
 
-void displayStringWrite( const char * str, char* matrixDisplayPointer ) // UM - Add matrix pointer as parameter.
+void displayStringWrite( const char * str ) // UM - Add matrix pointer as parameter.
 {
-    while (*str && *matrixDisplayPointer) { // UM - Make sure not to write memory positions outside matrixDisplay - CHEQUEAR!!!.
+    while (*str) { // UM - Make sure not to write memory positions outside matrixDisplay - CHEQUEAR!!!.
         // pcSerialComStringWrite(str); // DV - Not working (Should be outside the while).
+        matrixDisplay[displayRow][displayCol++] = *str;
         displayCodeWrite(DISPLAY_RS_DATA, *str++);
-        *matrixDisplayPointer++ = *str++; // UM - Overwrite display matrix.
+        //*matrixDisplayPointer++ = *str++; // UM - Overwrite display matrix.
     }
 }
 
@@ -315,4 +328,15 @@ static void displayDataBusWrite( uint8_t dataBus )
     delay( 1 );
     displayPinWrite( DISPLAY_PIN_EN, OFF );  
     delay( 1 );                   
+}
+
+
+void displayPrintMatrix() // UM - Function that prints matrix display.
+{
+    for(int i=0 ; i<DISPLAY_ROWS ; i++){
+        for(int j=0 ; j<DISPLAY_COLS ; j++){
+            printf("%c", matrixDisplay[i][j]);
+        }
+        printf("\n");
+    }
 }

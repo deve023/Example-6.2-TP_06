@@ -17,12 +17,11 @@
 #include "gas_sensor.h"
 #include "matrix_keypad.h"
 #include "display.h"
+#include "pc_serial_com.h"
 
 //=====[Declaration of private defines]========================================
 
 #define DISPLAY_REFRESH_TIME_MS 1000
-#define DISPLAY_ROWS 4 // UM 
-#define DISPLAY_COLS 20 // UM 
 
 //=====[Declaration of private data types]=====================================
 
@@ -36,11 +35,7 @@ DigitalOut systemBlockedLed(LED2);
 //=====[Declaration and initialization of public global variables]=============
 
 char codeSequenceFromUserInterface[CODE_NUMBER_OF_KEYS];
-char matrixDisplay[DISPLAY_ROWS][DISPLAY_COLS] = {{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
-                            {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
-                            {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
-                            {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}}; // UM - Matrix Dispaly delacration and initialization.
-char* matrixDisplayPointer = &matrixDisplay[0][0]; // UM - Matrix display pointer declaration and initialization.
+
 
 //=====[Declaration and initialization of private global variables]============
 
@@ -58,8 +53,6 @@ static void systemBlockedIndicatorUpdate();
 
 static void userInterfaceDisplayInit();
 static void userInterfaceDisplayUpdate();
-
-static void printMatrixDisplay();
 
 //=====[Implementations of public functions]===================================
 
@@ -145,14 +138,14 @@ static void userInterfaceDisplayInit()
 {
     displayInit( DISPLAY_CONNECTION_GPIO_4BITS );
      
-    displayCharPositionWrite ( 0,0, matrixDisplay, matrixDisplayPointer ); // UM - Adding new parameters.
-    displayStringWrite( "Temperature:", matrixDisplayPointer ); // UM - Adding new parameters.
+    displayCharPositionWrite ( 0,0 ); // UM - Adding new parameters.
+    displayStringWrite( "Temperature:" ); // UM - Adding new parameters.
 
-    displayCharPositionWrite ( 0,1, matrixDisplay, matrixDisplayPointer ); // UM - Adding new parameters.
+    displayCharPositionWrite ( 0,1 ); // UM - Adding new parameters.
     displayStringWrite( "Gas:" ); // UM - Adding new parameters.
     
-    displayCharPositionWrite ( 0,2, matrixDisplay, matrixDisplayPointer ); // UM - Adding new parameters.
-    displayStringWrite( "Alarm:", matrixDisplayPointer ); // UM - Adding new parameters.
+    displayCharPositionWrite ( 0,2 ); // UM - Adding new parameters.
+    displayStringWrite( "Alarm:" ); // UM - Adding new parameters.
 }
 
 static void userInterfaceDisplayUpdate()
@@ -166,32 +159,32 @@ static void userInterfaceDisplayUpdate()
         accumulatedDisplayTime = 0;
 
         sprintf(temperatureString, "%.0f", temperatureSensorReadCelsius());
-        displayCharPositionWrite ( 12,0, matrixDisplay, matrixDisplayPointer ); // UM - Adding new parameters.
-        displayStringWrite( temperatureString, matrixDisplayPointer ); // UM - Adding new parameters.
-        displayCharPositionWrite ( 14,0, matrixDisplay, matrixDisplayPointer ); // UM - Adding new parameters.
-        displayStringWrite( "'C", matrixDisplayPointer ); // UM - Adding new parameters.
+        displayCharPositionWrite ( 12,0 ); // UM - Adding new parameters.
+        displayStringWrite( temperatureString ); // UM - Adding new parameters.
+        displayCharPositionWrite ( 14,0 ); // UM - Adding new parameters.
+        displayStringWrite( "'C" ); // UM - Adding new parameters.
 
-        displayCharPositionWrite ( 4,1, matrixDisplay, matrixDisplayPointer ); // UM - Adding new parameters.
+        displayCharPositionWrite ( 4,1 ); // UM - Adding new parameters.
 
         if ( gasDetectorStateRead() ) {
-            displayStringWrite( "Detected    ", matrixDisplayPointer ); // UM - Adding new parameters.
+            displayStringWrite( "Detected    " ); // UM - Adding new parameters.
         } else {
-            displayStringWrite( "Not Detected", matrixDisplayPointer ); // UM - Adding new parameters.
+            displayStringWrite( "Not Detected" ); // UM - Adding new parameters.
         }
 
-        displayCharPositionWrite ( 6,2, matrixDisplay, matrixDisplayPointer ); // UM - Adding new parameters.
+        displayCharPositionWrite ( 6,2 ); // UM - Adding new parameters.
         
         if ( sirenStateRead() ) {
-            displayStringWrite( "ON ", matrixDisplayPointer ); // UM - Adding new parameters.
+            displayStringWrite( "ON " ); // UM - Adding new parameters.
         } else {
-            displayStringWrite( "OFF", matrixDisplayPointer ); // UM - Adding new parameters.
+            displayStringWrite( "OFF" ); // UM - Adding new parameters.
         }
 
     } else {
         accumulatedDisplayTime =
             accumulatedDisplayTime + SYSTEM_TIME_INCREMENT_MS;        
     } 
-    printMatrixDisplay();
+    displayPrintMatrix();
 }
 
 static void incorrectCodeIndicatorUpdate()
@@ -205,13 +198,5 @@ static void systemBlockedIndicatorUpdate()
 }
 
 
-static void printMatrixDisplay() // UM - Function that prints matrix display.
-{
-    for(int i=0 ; i<DISPLAY_ROWS ; i++){
-        for(int j=0 ; i<DISPLAY_COLS ; j++){
-            printf(%c, matrixDisplay[i][j]);
-        }
-        printf('\n');
-    }
-}
+
 
